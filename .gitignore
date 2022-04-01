@@ -1,0 +1,9 @@
+*.DS_Store
+*.py[cod]
+.svn
+*.swp
+.idea/
+__pycache__/
+venv_py
+dnslog/settings_dev.py
+logs/dnslog_debug.log
