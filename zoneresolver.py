@@ -49,8 +49,9 @@ class MySQLLogger:
         if not matches:
             return
         user = User.objects.filter(user_domain__exact=matches.group(1))
-        if not user and domain.strip(".") != settings.ADMIN_DOMAIN:
-            user = User.objects.filter(user_domain__exact='@')
+        # 有需要可以记录
+        # if not user and domain.strip(".") != settings.ADMIN_DOMAIN:
+        #     user = User.objects.filter(user_domain__exact='@')
         if not user:
             return
         ip = handler.client_address[0]
