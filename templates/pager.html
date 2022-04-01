@@ -1,0 +1,38 @@
+<nav>
+    <ul class="pagination">
+
+        {% if logs.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ logs.previous_page_number }}">
+                <span aria-hidden="true">&laquo;</span></a></li>
+        {% else %}
+            <li class="page-item disabled"><span class="page-link" aria-hidden="true">&laquo;</span></li>
+        {% endif %}
+
+        {% if logs.number|add:'-4' > 1 %}
+            <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ logs.number|add:'-5' }}">&hellip;</a></li>
+        {% endif %}
+
+        {% for i in logs.paginator.page_range %}
+            {% if logs.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% elif i > logs.number|add:'-5' and i < logs.number|add:'5' %}
+                <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if logs.paginator.num_pages > logs.number|add:'4' %}
+            <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ logs.number|add:'5' }}">&hellip;</a></li>
+        {% endif %}
+
+        {% if logs.has_next %}
+            <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ logs.next_page_number }}"><span aria-hidden="true">&raquo;</span></a></li>
+        {% else %}
+            <li class="page-item disabled"><span class="page-link" aria-hidden="true">&raquo;</span></li>
+        {% endif %}
+
+        <span class="page-link ml-4" style="border: none">第{{ page }}页 / 共{{ numpages }}页, 共{{ total }}条记录</span>
+        <a class="button btn-sm btn-danger" style="padding-top: 7px;" href="delete?{{ query_prefix }}{% if page != 1 %}&page={{ page }}{% endif %}"
+           onclick="delete_all(event, false)">删除所有记录</a>
+
+    </ul>
+</nav>

@@ -1,0 +1,389 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link href="{% static 'bootstrap-4.6.1/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        pre {
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
+            white-space: -pre-wrap;
+            white-space: -o-pre-wrap;
+            word-wrap: break-word;
+        }
+        mark {
+            background-color: #e3f2fd;
+            color: green;
+        }
+        .card-header {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body style="padding-top:10px;">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light mb-3" style="background-color: #e3f2fd;">
+            <ul class="nav nav-pills mr-auto">
+                <li class="nav-item mr-3" ><img src="/static/icon.png" height="40"/></li>
+              <li class="nav-item" ><a class="nav-link{% if type == 'dns' %} active{% endif %}" href="/dns/">DNSLog</a></li>
+              <li class="nav-item"><a class="nav-link{% if type == 'web' %} active{% endif %}" href="/web/">WebLog</a></li>
+                <li class="nav-item"><a class="nav-link{% if type == 'config' %} active{% endif %}" href="/config/">API</a></li>
+                <li class="nav-item"><a class="nav-link{% if type == 'rebind' %} active{% endif %}" href="/rebind/">Rebind</a></li>
+                {% if is_admin %}<li class="nav-item"><a class="nav-link" href="/as_admin/">Admin</a></li>{% endif %}
+            </ul>
+            <ul class="navbar-nav">
+                <span class="mr-3" style="color: cornflowerblue">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                      <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                    </svg>
+                    {{ username }}</span>
+            <a href="/logout/">退出</a>
+            </ul>
+        </nav>
+        {% if fail %}<div class="alert alert-danger">{{ fail }}</div>{% endif %}
+        {% if suc %}<div class="alert alert-success">{{ suc }}</div>{% endif %}
+        {% if type == 'dns'%}
+        <form class="form-inline my-2 mt-md-0 input-group-sm" style="display: flex;justify-content: space-between">
+        <div>
+            <input class="form-control mr-sm-2 input-sm" size="30" type="text" placeholder="域名" name="domain" value="{{ domain }}">
+            <button class="btn btn-sm btn-primary my-2 my-sm-0" type="submit">搜索</button>
+        </div>
+        {% include 'auto_reload.html' %}
+        </form>
+
+        <div data-example-id="hoverable-table">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>域名</th>
+                  <th>Type</th>
+                    <th>IP</th>
+                    <th>位置</th>
+                  <th>时间</th>
+                    <th style="width: 100px;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for log in logs %}
+                <tr>
+                <th scope="row">{{log.id}}</th>
+                <td style="word-break:break-all">{{ log.host }}</td>
+                <td>{{ log.type }}</td>
+                    <td><a href="?ip={{ log.ip }}">{% if log.ip %} {{ log.ip }}</a> {% else %} &nbsp; {% endif %} </td>
+                    <td>{% if log.city %} {{ log.city }} {% else %} &nbsp; {% endif %}</td>
+                <td>{{ log.created_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>
+                    <a class="button btn-sm btn-danger" href="delete?{{ query_prefix }}id={{ log.id }}{% if page != 1 %}&page={{ page }}{% endif %}">删除</a>
+                </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'pager.html' %}
+        </div>
+        {% endif %}
+        {% if type == 'web'%}
+        <form class="form-inline my-2 mt-md-0 input-group-sm" style="display: flex;justify-content: space-between">
+            <div>
+                <select class="form-control mr-2">
+                    <option {% if path != '' or headers == '' %}selected{% endif %}>URL</option>
+                    <option {% if headers != '' and path == '' %}selected{% endif %}>Headers</option>
+                </select>
+                <input class="form-control mr-sm-2 input-sm {% if headers != '' and path == '' %}d-none{% endif %}" size="30" type="text" placeholder="URL" name="path" id="inputURL" value="{{ path }}">
+                <input class="form-control mr-sm-2 input-sm {% if path != '' or headers == '' %}d-none{% endif %}" size="30" type="text" placeholder="headers" name="headers" id="inputHeaders" value="{{ headers }}">
+                <button class="btn btn-sm btn-primary my-2 my-sm-0" type="submit">搜索</button>
+            </div>
+            {% include 'auto_reload.html' %}
+        </form>
+        <div data-example-id="hoverable-table">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                    <th>ID</th>
+                    <th style="width: 350px;">URL</th>
+                    <th>IP</th>
+                    <th>位置</th>
+                    <th>时间</th>
+                    <th style="width: 150px;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for log in logs %}
+                <tr>
+                <th scope="row">{{log.id}}</th>
+                <td> <span style="word-break:break-all">{{ log.path }} </span></td>
+                <td><a href="?ip={{ log.remote_addr }}">{% if log.remote_addr %} {{ log.remote_addr }}</a> {% else %} &nbsp; {% endif %}</td>
+                    <td> {% if log.city %} {{ log.city }} {% else %} &nbsp; {% endif %} </td>
+                <td>{{ log.created_time|date:'Y-m-d H:i:s' }}</td>
+                <td style="width: 150px;">
+                    <a type="button" class="button btn-sm btn-primary" onclick="show_web_headers({{log.id}})" id="showButton_{{log.id}}">查看</a>
+                    <a type="button" class="button btn-sm btn-danger" href="delete?{{ query_prefix }}id={{ log.id }}{% if page != 1 %}&page={{ page }}{% endif %}">删除</a>
+                </td>
+                </tr>
+                <tr class="d-none" id="web_headers_{{log.id}}">
+                    <td colspan="6" style="word-break:break-all">
+                    <div>
+                        <pre class="alert alert-info">{% if log.city %}{{ log.headers }}{% else %}{{ log.remote_addr }}{% endif %}</pre>
+                    </div>
+                    </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% include 'pager.html' %}
+        </div>
+        {% endif %}
+        {% if type == 'config'%}
+        <div class="mt-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card" >
+                        <div class="card-body">
+                            <p class="card-text">
+                                <b>子域名:</b> <mark>{{userdomain}}</mark>
+                                <b class="ml-4">Token:</b> <mark>{{token}}</mark>
+                                {% if is_admin %}
+                                    <b class="ml-4 config"><input type="checkbox" id="enable_register" {% if enable_register == 'yes' %}checked{% endif %}> 开启用户注册功能</b>
+                                    <b class="ml-4 config"><input type="checkbox" id="enable_create_random_user" {% if enable_create_random_user == 'yes' %}checked{% endif %}> 开启产生随机账号</b>
+                                {% endif %}
+
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            单个请求命中查询
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                            {{host}}/api/{type}/{{username}}/{prefix}/?token={{ token }}</p>
+                            </p>
+                            <ul>
+                                <li>type: 设置为 <mark>dns</mark> 或者 <mark>web</mark></li>
+                                <li>prefix: 三级域名前缀</li>
+                            </ul>
+                            <p>检查是否触发 <mark>test.{{userdomain}}</mark>，访问：<a href="{{host}}/api/dns/{{username}}/test/?token={{ token }}" target="_blank">{{host}}/api/dns/{{username}}/test/?token={{ token }}</a></p>
+                            <ul>
+                                <li>返回 <mark>True</mark>，请求被触发</li>
+                                <li>返回 <mark>False</mark>，请求未触发</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            多个请求命中查询
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                {{host}}/api/group/dns/{{username}}/{prefix}/?token={{ token }}</p>
+                            </p>
+                            <ul>
+                                <li>prefix: 三级域名前缀</li>
+                            </ul>
+                            <p>对于一个较大的Payload集合，首先批量投递payload，再通过单个请求，来检查哪些payload触发执行成功。</p>
+                            <ul>
+                                <li>扫描器投递 <mark>payload1</mark>，使用域名：<mark>payload1.xxx-rce.{{userdomain}}</mark></li>
+                                <li>扫描器投递 <mark>payload2</mark>，使用域名：<mark>payload2.xxx-rce.{{userdomain}}</mark></li>
+                                <li>扫描器投递 <mark>payload3</mark>，使用域名：<mark>payload3.xxx-rce.{{userdomain}}</mark></li>
+                                <li>...</li>
+                            </ul>
+                            <p>检查是否存在漏洞，访问：<a href="{{host}}/api/group/dns/{{username}}/xxx-rce/?token={{ token }}" target="_blank">{{host}}/api/group/dns/{{user_domain}}/xxx-rce/?token={{ token }}</a></p>
+                            <ul>
+                                <li>返回 <mark>False</mark>，漏洞未触发</li>
+                                <li>返回 <mark>{"success": "true", "data": ["payload3", "payload2", "payload1"]}</mark>，漏洞被触发，data字段包含成功触发的payload清单，至多返回50个</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if type == 'rebind'%}
+            <div class="mt-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card">
+                            <div class="card-header">
+                                生成域名
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                <form class="form-inline my-2 mt-md-0 input-group-sm" style="display: flex;justify-content: space-between">
+                                    <div>
+                                        <input class="form-control mr-sm-2 input-sm" size="20" type="text" placeholder="合法IP" id="valid_ip" value="123.123.123.123">
+                                        <input class="form-control mr-sm-2 input-sm" size="20" type="text" placeholder="非法IP" id="invalid_ip" value="10.1.1.1">
+                                        <button class="btn btn-primary my-2 my-sm-0" type="button" onclick="generate_domain(event)">生成域名</button>
+
+                                    </div>
+                                </form>
+                                    <div class="mt-4" id="result" style="color: red"></div>
+                                <div class="mt-4"><a href="/dns/?domain=.r.{{ userdomain }}&monitor=true" target="_blank" class="mr-4">DNS监控</a>
+                                    <a href="/web/?path=.r.{{ userdomain }}&monitor=true" target="_blank">HTTP监控</a></div>
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="card mt-2">
+                            <div class="card-header">
+                                什么是DNS重绑定
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    应用程序在请求用户可控的URL/域名资源时，有安全经验的程序员，往往会先解析域名，判断域名指向的IP是否在允许的范围中</p>
+                                <p class="card-text">
+                                    例如，为了防御SSRF攻击，开发会首先检测URL中的域名指向的是一个非内网IP，才会在应用中发起后续请求。但是，由于第二步HTTP请求并不直接依赖第一步DNS请求的结果，黑客可以控制第二步请求中的目标IP，导致绕过检测。
+                                </p>
+                                <p class="card-text">
+                                    攻击的方法是：<br />
+                                    <mark>在程序做合法性校验时，DNS服务器首先返回一个预期的合法IP。由于DNS记录TTL为0，当应用真正发起HTTP请求资源时，再次DNS查询，此时DNS服务器立即返回一个非法的IP。</mark>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">提示</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    是否清空全部 <b>{{ total }}</b> 条记录？删除后数据无法恢复
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">关闭</button>
+                    <a class="button btn-sm btn-danger" style="padding-top: 7px;" href="delete?{{ query_prefix }}{% if page != 1 %}&page={{ page }}{% endif %}"
+                       onclick="delete_all(event, true)">删除</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="{% static 'jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'bootstrap-4.6.1/js/bootstrap.bundle.js' %}"></script>
+
+    <script>
+        function show_web_headers(id) {
+            if ( $('#web_headers_' + id)[0].className == 'd-none'){
+                $('#web_headers_' + id).removeClass('d-none');
+                $('#showButton_' + id).text('收起');
+            } else {
+                $('#web_headers_' + id).addClass('d-none');
+                $('#showButton_' + id).text('查看');
+            }
+        }
+/*        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+            return false;
+        };
+ */
+
+        function delete_all(e, confirm) {
+            if (confirm)
+                return true;
+            e.preventDefault();
+            $('#confirmModal').modal();
+/*            if (!getUrlParameter('ip') && !getUrlParameter('domain') && !getUrlParameter('path') && !getUrlParameter('headers')) {
+                e.preventDefault();
+                $('#confirmModal').modal();
+            }
+ */
+        }
+
+        $('select').on('change', function() {
+            if (this.value=='URL') {
+                $('#inputHeaders').prop('value', '');
+                $('#inputHeaders').addClass('d-none');
+                $('#inputURL').removeClass('d-none');
+            } else {
+                $('#inputHeaders').removeClass('d-none');
+                $('#inputURL').prop('value', '');
+                $('#inputURL').addClass('d-none');
+            }
+        });
+        {% if monitor %}
+            window.reload_interval = setInterval(data_changed, 10000);
+        {% endif %}
+        $('#auto_refresh').change(function () {
+            if ($('#auto_refresh').is(':checked')){
+                window.reload_interval = setInterval(data_changed, 10000);
+            } else {
+                clearInterval(window.reload_interval);
+            }
+        })
+        function data_changed() {
+            let base_url = $(location).attr('href');
+            if (base_url.indexOf('?') < 0){
+                base_url += '?'
+            }
+            url = base_url + '&check_update=true&last_id=' + {{ last_id }};
+            $.ajax({url:url, success:function(resp){
+                    if (resp === 'Changed'){
+                        if (base_url.indexOf('monitor=true') < 0){
+                            base_url += '&monitor=true'
+                        }
+                        window.location.replace(base_url);
+                    }
+                }});
+        }
+
+        function generate_domain(e){
+            e.preventDefault();
+            url = '/rebind/gen?valid_ip=' + $('#valid_ip').prop('value') + '&invalid_ip=' + $('#invalid_ip').prop('value') ;
+            $.ajax({url:url, success:function(resp){
+                    $('#result').html(resp);
+            }});
+        }
+
+        $('.config').change(function (e) {
+            url = '/config/update?name=' + e.target.id + '&value=';
+            if ($('#' + e.target.id).is(':checked')){
+                $.ajax({url:url+'yes', success:function(resp){
+                        location.reload();
+                    }});
+            } else {
+                $.ajax({url:url+'no', success:function(resp){
+                        location.reload();
+                    }});
+            }
+        })
+
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+        })
+
+</script>
+
+</body>
+</html>

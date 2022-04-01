@@ -1,0 +1,76 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{ title }}</title>
+      <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link href="{% static 'bootstrap-4.6.1/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'signin.css' %}" rel="stylesheet">
+  </head>
+  <body class="text-center">
+    <form class="form-signin" method="post"{% if reg == 'true' %} oninput='password_check.setCustomValidity(password_check.value != password.value ? "两次输入的密码不一致" : "")'{% endif %}>
+        <img class="mb-4" src="{% static "pentester.png" %}" width="400">
+        <div class="alert-warning mb-2">{{ error_msg }}</div>
+        {% if reg == 'true' %}
+            <p class="alert alert-info">{% if init == 'true' %}<span style="color: red">请创建第一个账户，默认将成为管理员</span><br />{% endif %}用户名即域名前缀，越短，越有利于绕过限制</p>
+
+            <input type="text" id="username" name="username" class="form-control mt-3" placeholder="用户名" value="{{ username }}" required autofocus>
+            <input type="email" id="email" name="email" class="form-control" placeholder="邮箱" value="{{ email }}" style="border-radius: 0;margin-bottom: -1px;" required autofocus>
+            <input type="password" id="password" name="password" class="form-control" placeholder="密码" minlength="6" value="{{ password }}" style="border-radius: 0;margin-bottom: -1px;" required>
+            <input type="password" id="password_check" name="password_check" class="form-control" placeholder="再次输入密码" required>
+            {% csrf_token %}
+            <button class="btn btn-lg btn-primary btn-block" type="submit">创建用户</button>
+            <div class="mt-4"><a href="/login">已有账号？登录</a></div>
+        {% else %}
+              <input type="text" id="username" name="username" class="form-control" placeholder="用户名" required autofocus>
+              <input type="password" id="password" name="password" class="form-control" placeholder="密码" minlength="6" required>
+                {% csrf_token %}
+              <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+            <div class="mt-4">
+                {% if enable_register == 'yes' %}<a href="/register">注册新账号</a> {% endif %}
+                {% if enable_create_random_user == 'yes' %}
+                    <a href="#" class="ml-5" onclick="gen_random_id(event, false)">创建随机ID并登录</a>
+                    {% endif %}</div>
+
+        {% endif %}
+            <div class="alert alert-info mt-5" role="alert">
+                基于<a href="https://github.com/bugscanteam/dnslog/" class="alert-link" target="_blank">bugscan dnslog</a>开发<br/>
+        </div>
+        <p class="mt-5 mb-3 text-muted">&copy; 2022-2022 <a href="https://github.com/lijiejie/eyes.sh" target="_blank">LiJieJie</a></p>
+    </form>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">提示</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>随机账号创建后，无法再次登录，其数据可能被定期清理 <br />
+                    如果你希望长期保存日志，可注册个人账号</p>
+                </div>
+                <div class="modal-footer">
+                    <a class="button btn-sm btn-primary" style="padding-top: 7px;" href="#"
+                       onclick="gen_random_id(event, true)">确认创建</a>
+                </div>
+            </div>
+        </div>
+
+        <script src="{% static 'jquery-3.6.0.min.js' %}"></script>
+        <script src="{% static 'bootstrap-4.6.1/js/bootstrap.bundle.js' %}"></script>
+  <script>
+      function gen_random_id(e, confirm) {
+          e.preventDefault();
+          if (confirm){
+              window.location.replace('/random' + '_id' + '_login');
+          }
+          $('#confirmModal').modal();
+      }
+  </script>
+  </body>
+</html>
