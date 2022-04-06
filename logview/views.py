@@ -7,6 +7,7 @@ import struct
 import socket
 import random
 import string
+import re
 from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
@@ -161,6 +162,10 @@ def register(request):
             context['error_msg'] = '无法创建该账号,已被占用'
             return render(request, 'login.html', context)
         else:
+            m = re.match('[a-zA-Z0-9]+', username)
+            if not m or len(m.group()) != len(username):
+                context['error_msg'] = '用户名只能包含字母或数字'
+                return render(request, 'login.html', context)
             password = hashlib.md5((password + username[:3] + '@dnslog').encode('utf-8')).hexdigest()
             token = hashlib.md5((password + username[:3] + '@token').encode('utf-8')).hexdigest()[:8]
             user = User.objects.create(username=username, password=password,
