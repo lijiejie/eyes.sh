@@ -13,10 +13,15 @@ mysql_secure_installation
 # [mysqld]
 # character-set-server=utf8
 #
+# DROP DATABASE `dnslog`;
+# CREATE DATABASE `dnslog` CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 curl https://pyenv.run | bash
 echo -e '''export PATH="/root/.pyenv/bin:$PATH"\neval "$(pyenv init -)"\neval "$(pyenv virtualenv-init -)"''' >>/root/.bashrc
 source /root/.bashrc
+mkdir ~/.pyenv/cache
+# For chinese user:
+wget -P ~/.pyenv/cache/ https://registry.npmmirror.com/-/binary/python/3.8.2/Python-3.8.2.tar.xz
 pyenv install 3.8.2
 pyenv virtualenv 3.8.2 dnslog
 ~/.pyenv/versions/dnslog/bin/pip3  install -r ./requirements.txt

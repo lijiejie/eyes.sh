@@ -265,6 +265,10 @@ def rebind_view(request):
     return log_view(request, 'rebind')
 
 
+def payloads_view(request):
+    return log_view(request, 'payloads')
+
+
 def log_view(request, type):
     userid = request.session.get('userid', None)
     if not userid:
@@ -361,9 +365,10 @@ def log_view(request, type):
         context['page'] = 0
         context['query_prefix'] = ''
         context['host'] = request.scheme + '://' + request.get_host()
+    elif type == 'payloads':
+        context['title'] = 'Payloads大全'
     else:
         return HttpResponseRedirect('/')
-
     context['userdomain'] = user.user_domain + '.' + settings.DNS_DOMAIN
     context['token'] = user.token
     context['username'] = user.username
@@ -377,7 +382,7 @@ def api(request, type, username, prefix):
     token = request.GET.get('token', '')
     if not User.objects.filter(username=username, token=token):
         return HttpResponse('Invalid token')
-    
+
     host = "%s.%s.%s" % (prefix, username, settings.DNS_DOMAIN)
     if type == 'dns':
         res = DNSLog.objects.filter(host=host)
