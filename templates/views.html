@@ -55,7 +55,7 @@
         <div>
             <input class="form-control mr-sm-2 input-sm" size="30" type="text" placeholder="域名" name="domain" value="{{ domain }}">
             <button class="btn btn-sm btn-primary my-2 my-sm-0" type="submit">搜索</button>
-            &nbsp;(子域名： <mark>{{userdomain}}</mark>)
+            <span class="ml-5">子域名: <mark>{{userdomain}}</mark></span>
         </div>
         {% include 'auto_reload.html' %}
         </form>
