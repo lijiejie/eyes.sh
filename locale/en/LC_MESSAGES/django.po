@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-10 01:26+0800\n"
+"POT-Creation-Date: 2022-04-10 02:15+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\dnslog\settings.py:79
+#: .\dnslog\settings.py:79 .\dnslog\settings_dev.py:79
 msgid "中文"
 msgstr ""
 
-#: .\dnslog\settings.py:80
-msgid "English-American"
+#: .\dnslog\settings.py:80 .\dnslog\settings_dev.py:80
+msgid "English"
 msgstr ""
 
 #: .\logview\views.py:87 .\templates\login.html:64
@@ -116,6 +116,10 @@ msgid ""
 msgstr ""
 "Auto reload webpage once new records found, you can also check this box on a "
 "search result page to monitor any keywords you like"
+
+#: .\templates\login.html:51
+msgid "请创建第一个账户，默认将成为管理员"
+msgstr "Create first user, it will become the sys admin"
 
 #: .\templates\login.html:51
 msgid "用户名即域名前缀，越短，越有利于绕过限制"

@@ -48,7 +48,7 @@
 
         <div class="alert-warning mb-2">{{ error_msg }}</div>
         {% if reg == 'true' %}
-            <p class="alert alert-info">{% if init == 'true' %}<span style="color: red">请创建第一个账户，默认将成为管理员</span><br />{% endif %}{% translate '用户名即域名前缀，越短，越有利于绕过限制' %}</p>
+            <p class="alert alert-info">{% if init == 'true' %}<span style="color: red">{% translate '请创建第一个账户，默认将成为管理员' %}</span><br />{% endif %}{% translate '用户名即域名前缀，越短，越有利于绕过限制' %}</p>
 
             <input type="text" id="username" name="username" class="form-control mt-3" placeholder="{% translate '用户名' %}" value="{{ username }}" required autofocus>
             <input type="email" id="email" name="email" class="form-control" placeholder="{% translate '邮箱' %}" value="{{ email }}" style="border-radius: 0;margin-bottom: -1px;" required autofocus>
