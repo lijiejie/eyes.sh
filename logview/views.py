@@ -19,6 +19,7 @@ from django.contrib.auth.models import User as SysUser
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.contrib.auth import logout
+from django.utils.translation import gettext as _
 
 
 def get_city_by_ip(ip):
@@ -83,7 +84,7 @@ def do_login(request):
     if userid:
         return HttpResponseRedirect('/dns/')
 
-    context = {'title': '登录', 'enable_register': 'yes', 'enable_create_random_user': 'yes'}
+    context = {'title': _('登录'), 'enable_register': 'yes', 'enable_create_random_user': 'yes'}
     c = Config.objects.filter(name='enable_register')
     if c and 'no' == c[0].value:
         context['enable_register'] = 'no'
@@ -100,7 +101,7 @@ def do_login(request):
             if user.try_login_counter > 10 and (timezone.now() - user.last_try_login_time).seconds < 600:
                 user.try_login_counter += 1
                 user.save()
-                context['error_msg'] = '登录失败次数太多，锁定10分钟'
+                context['error_msg'] = _('登录失败次数太多，锁定10分钟')
                 return render(request, 'login.html', context)
             if user.password == hashlib.md5((password + username[:3] + '@dnslog').encode('utf-8')).hexdigest():
                 request.session['userid'] = user.id
@@ -112,7 +113,7 @@ def do_login(request):
             else:
                 user.try_login_counter += 1
                 user.save()
-        context['error_msg'] = '用户名或密码错误'
+        context['error_msg'] = _('用户名或密码错误')
         return render(request, 'login.html', context)
 
     if User.objects.count() < 1:
@@ -124,15 +125,15 @@ def do_login(request):
 def random_id_login(request):
     c = Config.objects.filter(name='enable_create_random_user')
     if c and 'no' == c[0].value:
-        return redirect('/login?msg=随机账号功能已关闭')
+        return redirect('/login?msg=' + _('随机账号功能已关闭'))
 
     user_agent = request.META.get('HTTP_USER_AGENT').lower()
     if user_agent.find('bot') > 0 or user_agent.find('spider') > 0:
-        return redirect('/login?msg=爬虫禁止登录')
+        return redirect('/login?msg=' + _('爬虫禁止登录'))
 
     user_ip = request.META.get('HTTP_X_REAL_IP') or request.META.get('REMOTE_ADDR')
     if User.objects.filter(login_ip=user_ip).count() > 20:
-        return redirect('/login?msg=随机账号超限，请注册登录')
+        return redirect('/login?msg=' + _('随机账号超限，请注册登录'))
     for _ in range(30):
         username = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
         if not User.objects.filter(username=username):
@@ -142,29 +143,29 @@ def random_id_login(request):
             request.session['userid'] = user.id
             request.session['username'] = username
             return redirect('/dns/')
-    return redirect('/login?msg=随机账号创建失败')
+    return redirect('/login?msg=' + _('随机账号创建失败'))
 
 
 def register(request):
     c = Config.objects.filter(name='enable_register')
     if c and 'no' == c[0].value:
-        return redirect('/login?msg=注册功能已关闭')
+        return redirect('/login?msg=' + _('注册功能已关闭'))
     username = request.POST.get('username', '')[:100]
     password = request.POST.get('password', '')[:100]
     email = request.POST.get('email', '')[:100]
-    context = {'title': '注册', 'reg': 'true', 'error_msg': '',
+    context = {'title': _('注册'), 'reg': 'true', 'error_msg': '',
                'username': username, 'password': password, 'email': email}
     if User.objects.count() < 1:
         context['init'] = 'true'
 
     if request.method == 'POST':
         if User.objects.filter(username=username):
-            context['error_msg'] = '无法创建该账号,已被占用'
+            context['error_msg'] = _('无法创建该账号,已被占用')
             return render(request, 'login.html', context)
         else:
             m = re.match('[a-zA-Z0-9]+', username)
             if not m or len(m.group()) != len(username):
-                context['error_msg'] = '用户名只能包含字母或数字'
+                context['error_msg'] = _('用户名只能包含字母或数字')
                 return render(request, 'login.html', context)
             password = hashlib.md5((password + username[:3] + '@dnslog').encode('utf-8')).hexdigest()
             token = hashlib.md5((password + username[:3] + '@token').encode('utf-8')).hexdigest()[:8]
@@ -175,7 +176,7 @@ def register(request):
                 SysUser.objects.create_user(username=username, email=email, password=password,
                                             is_staff=1, is_superuser=1)
             user.save()
-            return redirect('/login?msg=注册成功,请登录以确保密码有效')
+            return redirect('/login?msg=' + _('注册成功,请登录以确保密码有效'))
 
     return render(request, 'login.html', context)
 
@@ -218,13 +219,13 @@ def dns_delete(request):
     if obj:
         if user.username != 'demo':
             obj.delete()
-        return redirect(url+'&suc=删除成功')
+        return redirect(url+'&suc=' + _('删除成功'))
     else:
         if request.GET.get("domain"):
             url += "&domain=" + request.GET.get("domain")
         if request.GET.get("ip"):
             url += "&ip=" + request.GET.get("ip")
-        return redirect(url+"&fail=删除失败")
+        return redirect(url+"&fail=" + _("删除失败"))
 
 
 def web_delete(request):
@@ -249,13 +250,13 @@ def web_delete(request):
     if obj:
         if user.username != 'demo':
             obj.delete()
-        return redirect(url+'&suc=删除成功')
+        return redirect(url+'&suc=' + _('删除成功'))
     else:
         if request.GET.get("domain"):
             url += "&domain=" + request.GET.get("domain")
         if request.GET.get("ip"):
             url += "&ip=" + request.GET.get("ip")
-        return redirect(url+"&fail=删除失败")
+        return redirect(url+"&fail=" + _("删除失败"))
 
 
 def web_view(request):
@@ -303,7 +304,7 @@ def log_view(request, type):
                 return HttpResponse('noChange')
             else:
                 return HttpResponse('Changed')
-        context['title'] = 'DNSLog管理'
+        context['title'] = _('DNSLog管理')
         context['page'] = page
         context['logs'] = logs
         context['numpages'] = paginator.num_pages
@@ -336,7 +337,7 @@ def log_view(request, type):
                 return HttpResponse('noChange')
             else:
                 return HttpResponse('Changed')
-        context['title'] = 'WebLog管理'
+        context['title'] = _('WebLog管理')
         context['page'] = page
         context['logs'] = logs
         context['numpages'] = paginator.num_pages
@@ -359,19 +360,19 @@ def log_view(request, type):
                 c = Config.objects.filter(name=c_name)
                 if c and 'no' == c[0].value:
                     context[c_name] = 'no'
-        context['title'] = 'API配置'
+        context['title'] = _('API配置')
         context['last_id'] = context['total'] = context['page'] = 0
         context['query_prefix'] = ''
         context['host'] = request.scheme + '://' + request.get_host()
     elif type == 'rebind':
-        context['title'] = 'DNS重绑定'
+        context['title'] = _('DNS重绑定')
         context['last_id'] = 0
         context['total'] = 0
         context['page'] = 0
         context['query_prefix'] = ''
         context['host'] = request.scheme + '://' + request.get_host()
     elif type == 'payloads':
-        context['title'] = 'Payloads大全'
+        context['title'] = _('Payloads大全')
     else:
         return HttpResponseRedirect('/')
     context['userdomain'] = user.user_domain + '.' + settings.DNS_DOMAIN

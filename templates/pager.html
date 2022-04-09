@@ -1,3 +1,4 @@
+{% load i18n %}
 <nav>
     <ul class="pagination">
 
@@ -30,9 +31,9 @@
             <li class="page-item disabled"><span class="page-link" aria-hidden="true">&raquo;</span></li>
         {% endif %}
 
-        <span class="page-link ml-4" style="border: none">第{{ page }}页 / 共{{ numpages }}页, 共{{ total }}条记录</span>
+        <span class="page-link ml-4" style="border: none">{% blocktranslate %}第{{ page }}页 / 共{{ numpages }}页, 共{{ total }}条记录{% endblocktranslate %}</span>
         <a class="button btn-sm btn-danger" style="padding-top: 7px;" href="delete?{{ query_prefix }}{% if page != 1 %}&page={{ page }}{% endif %}"
-           onclick="delete_all(event, false)">删除所有记录</a>
+           onclick="delete_all(event, false)">{% translate '删除所有记录' %}</a>
 
     </ul>
 </nav>

@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from django.contrib import admin
 from logview import views
 
@@ -23,5 +23,6 @@ urlpatterns = [
     re_path(r'^rebind/gen$', views.rebind_gen, name='rebind_gen'),
     re_path(r'^as_admin/$', views.as_admin, name='as_admin'),
     re_path(r'^config/update$', views.config_update, name='config_update'),
+    path('i18n/', include('django.conf.urls.i18n')),
     re_path(r'^.*$', views.index, name='index'),
 ]

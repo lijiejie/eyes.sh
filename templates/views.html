@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -45,7 +46,7 @@
                       <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
                     </svg>
                     {{ username }}</span>
-            <a href="/logout/">退出</a>
+            <a href="/logout/">{% translate '退出' %}</a>
             </ul>
         </nav>
         {% if fail %}<div class="alert alert-danger">{{ fail }}</div>{% endif %}
@@ -53,9 +54,9 @@
         {% if type == 'dns'%}
         <form class="form-inline my-2 mt-md-0 input-group-sm" style="display: flex;justify-content: space-between">
         <div>
-            <input class="form-control mr-sm-2 input-sm" size="30" type="text" placeholder="域名" name="domain" value="{{ domain }}">
-            <button class="btn btn-sm btn-primary my-2 my-sm-0" type="submit">搜索</button>
-            <span class="ml-5">子域名: <mark>{{userdomain}}</mark></span>
+            <input class="form-control mr-sm-2 input-sm" size="30" type="text" placeholder="{% translate '域名' %}" name="domain" value="{{ domain }}">
+            <button class="btn btn-sm btn-primary my-2 my-sm-0" type="submit">{% translate '搜索' %}</button>
+            <span class="ml-5">{% translate '子域名' %}: <mark>{{userdomain}}</mark></span>
         </div>
         {% include 'auto_reload.html' %}
         </form>
@@ -65,12 +66,12 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>域名</th>
+                  <th>{% translate '域名' %}</th>
                   <th>Type</th>
                     <th>IP</th>
-                    <th>位置</th>
-                  <th>时间</th>
-                    <th style="width: 100px;">操作</th>
+                    <th>{% translate '位置' %}</th>
+                  <th>{% translate '时间' %}</th>
+                    <th style="width: 120px;">{% translate '操作' %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -83,7 +84,7 @@
                     <td>{% if log.city %} {{ log.city }} {% else %} &nbsp; {% endif %}</td>
                 <td>{{ log.created_time|date:'Y-m-d H:i:s' }}</td>
                     <td>
-                    <a class="button btn-sm btn-danger" href="delete?{{ query_prefix }}id={{ log.id }}{% if page != 1 %}&page={{ page }}{% endif %}">删除</a>
+                    <a class="button btn-sm btn-danger" href="delete?{{ query_prefix }}id={{ log.id }}{% if page != 1 %}&page={{ page }}{% endif %}">{% translate '删除' %}</a>
                 </td>
                 </tr>
                 {% endfor %}
@@ -101,7 +102,7 @@
                 </select>
                 <input class="form-control mr-sm-2 input-sm {% if headers != '' and path == '' %}d-none{% endif %}" size="30" type="text" placeholder="URL" name="path" id="inputURL" value="{{ path }}">
                 <input class="form-control mr-sm-2 input-sm {% if path != '' or headers == '' %}d-none{% endif %}" size="30" type="text" placeholder="headers" name="headers" id="inputHeaders" value="{{ headers }}">
-                <button class="btn btn-sm btn-primary my-2 my-sm-0" type="submit">搜索</button>
+                <button class="btn btn-sm btn-primary my-2 my-sm-0" type="submit">{% translate '搜索' %}</button>
             </div>
             {% include 'auto_reload.html' %}
         </form>
@@ -112,9 +113,9 @@
                     <th>ID</th>
                     <th style="width: 350px;">URL</th>
                     <th>IP</th>
-                    <th>位置</th>
-                    <th>时间</th>
-                    <th style="width: 150px;">操作</th>
+                    <th>{% translate '位置' %}</th>
+                    <th>{% translate '时间' %}</th>
+                    <th style="width: 170px;">{% translate '操作' %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,8 +127,8 @@
                     <td> {% if log.city %} {{ log.city }} {% else %} &nbsp; {% endif %} </td>
                 <td>{{ log.created_time|date:'Y-m-d H:i:s' }}</td>
                 <td style="width: 150px;">
-                    <a type="button" class="button btn-sm btn-primary" onclick="show_web_headers({{log.id}})" id="showButton_{{log.id}}">查看</a>
-                    <a type="button" class="button btn-sm btn-danger" href="delete?{{ query_prefix }}id={{ log.id }}{% if page != 1 %}&page={{ page }}{% endif %}">删除</a>
+                    <a type="button" class="button btn-sm btn-primary" onclick="show_web_headers({{log.id}})" id="showButton_{{log.id}}">{% translate '查看' %}</a>
+                    <a type="button" class="button btn-sm btn-danger" href="delete?{{ query_prefix }}id={{ log.id }}{% if page != 1 %}&page={{ page }}{% endif %}">{% translate '删除' %}</a>
                 </td>
                 </tr>
                 <tr class="d-none" id="web_headers_{{log.id}}">
@@ -150,11 +151,11 @@
                     <div class="card" >
                         <div class="card-body">
                             <p class="card-text">
-                                <b>子域名:</b> <mark>{{userdomain}}</mark>
+                                <b>{% translate '子域名' %}:</b> <mark>{{userdomain}}</mark>
                                 <b class="ml-4">Token:</b> <mark>{{token}}</mark>
                                 {% if is_admin %}
-                                    <b class="ml-4 config"><input type="checkbox" id="enable_register" {% if enable_register == 'yes' %}checked{% endif %}> 开启用户注册功能</b>
-                                    <b class="ml-4 config"><input type="checkbox" id="enable_create_random_user" {% if enable_create_random_user == 'yes' %}checked{% endif %}> 开启产生随机账号</b>
+                                    <b class="ml-4 config"><input type="checkbox" id="enable_register" {% if enable_register == 'yes' %}checked{% endif %}> {% translate '开启用户注册功能' %}</b>
+                                    <b class="ml-4 config"><input type="checkbox" id="enable_create_random_user" {% if enable_create_random_user == 'yes' %}checked{% endif %}> {% translate '开启产生随机账号' %}</b>
                                 {% endif %}
 
                             </p>
@@ -163,46 +164,46 @@
 
                     <div class="card mt-2">
                         <div class="card-header">
-                            单个请求命中查询
+                            {% translate '单个请求命中查询' %}
                         </div>
                         <div class="card-body">
                             <p class="card-text">
                             {{host}}/api/{type}/{{username}}/{prefix}/?token={{ token }}</p>
                             </p>
                             <ul>
-                                <li>type: 设置为 <mark>dns</mark> 或者 <mark>web</mark></li>
-                                <li>prefix: 三级域名前缀</li>
+                                <li>type: {% translate '设置为' %} <mark>dns</mark> {% translate '或者' %} <mark>web</mark></li>
+                                <li>prefix: {% translate '三级域名前缀' %}</li>
                             </ul>
-                            <p>检查是否触发 <mark>test.{{userdomain}}</mark>，访问：<a href="{{host}}/api/dns/{{username}}/test/?token={{ token }}" target="_blank">{{host}}/api/dns/{{username}}/test/?token={{ token }}</a></p>
+                            <p>{% translate '检查是否触发' %} <mark>test.{{userdomain}}</mark>，{% translate '访问' %}：<a href="{{host}}/api/dns/{{username}}/test/?token={{ token }}" target="_blank">{{host}}/api/dns/{{username}}/test/?token={{ token }}</a></p>
                             <ul>
-                                <li>返回 <mark>True</mark>，请求被触发</li>
-                                <li>返回 <mark>False</mark>，请求未触发</li>
+                                <li>{% translate '返回' %} <mark>True</mark>，{% translate '请求被触发' %}</li>
+                                <li>{% translate '返回' %} <mark>False</mark>，{% translate '请求未触发' %}</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="card mt-2">
                         <div class="card-header">
-                            多个请求命中查询
+                            {% translate '多个请求命中查询' %}
                         </div>
                         <div class="card-body">
                             <p class="card-text">
                                 {{host}}/api/group/dns/{{username}}/{prefix}/?token={{ token }}</p>
                             </p>
                             <ul>
-                                <li>prefix: 三级域名前缀</li>
+                                <li>prefix: {% translate '三级域名前缀' %}</li>
                             </ul>
-                            <p>对于一个较大的Payload集合，首先批量投递payload，再通过单个请求，来检查哪些payload触发执行成功。</p>
+                            <p>{% translate '对于一个较大的Payload集合，首先批量投递payload，再通过单个请求，来检查哪些payload触发执行成功。' %}</p>
                             <ul>
-                                <li>扫描器投递 <mark>payload1</mark>，使用域名：<mark>payload1.xxx-rce.{{userdomain}}</mark></li>
-                                <li>扫描器投递 <mark>payload2</mark>，使用域名：<mark>payload2.xxx-rce.{{userdomain}}</mark></li>
-                                <li>扫描器投递 <mark>payload3</mark>，使用域名：<mark>payload3.xxx-rce.{{userdomain}}</mark></li>
+                                <li>{% translate '扫描器投递' %} <mark>payload1</mark>，{% translate '使用域名' %}：<mark>payload1.xxx-rce.{{userdomain}}</mark></li>
+                                <li>{% translate '扫描器投递' %} <mark>payload2</mark>，{% translate '使用域名' %}：<mark>payload2.xxx-rce.{{userdomain}}</mark></li>
+                                <li>{% translate '扫描器投递' %} <mark>payload3</mark>，{% translate '使用域名' %}：<mark>payload3.xxx-rce.{{userdomain}}</mark></li>
                                 <li>...</li>
                             </ul>
-                            <p>检查是否存在漏洞，访问：<a href="{{host}}/api/group/dns/{{username}}/xxx-rce/?token={{ token }}" target="_blank">{{host}}/api/group/dns/{{username}}/xxx-rce/?token={{ token }}</a></p>
+                            <p>{% translate '检查是否存在漏洞，访问' %}：<a href="{{host}}/api/group/dns/{{username}}/xxx-rce/?token={{ token }}" target="_blank">{{host}}/api/group/dns/{{username}}/xxx-rce/?token={{ token }}</a></p>
                             <ul>
-                                <li>返回 <mark>False</mark>，漏洞未触发</li>
-                                <li>返回 <mark>{"success": "true", "data": ["payload3", "payload2", "payload1"]}</mark>，漏洞被触发，data字段包含成功触发的payload清单，至多返回50个</li>
+                                <li>{% translate '返回' %} <mark>False</mark>，{% translate '漏洞未触发' %}</li>
+                                <li>{% translate '返回' %} <mark>{"success": "true", "data": ["payload3", "payload2", "payload1"]}</mark>{% translate '，漏洞被触发，data字段包含成功触发的payload清单，至多返回50个' %}</li>
                             </ul>
                         </div>
                     </div>
@@ -217,21 +218,21 @@
                     <div class="card-body">
                         <div class="card">
                             <div class="card-header">
-                                生成域名
+                                {% translate '生成域名' %}
                             </div>
                             <div class="card-body">
                                 <p class="card-text">
                                 <form class="form-inline my-2 mt-md-0 input-group-sm" style="display: flex;justify-content: space-between">
                                     <div>
-                                        <input class="form-control mr-sm-2 input-sm" size="20" type="text" placeholder="合法IP" id="valid_ip" value="123.123.123.123">
-                                        <input class="form-control mr-sm-2 input-sm" size="20" type="text" placeholder="非法IP" id="invalid_ip" value="10.1.1.1">
-                                        <button class="btn btn-primary my-2 my-sm-0" type="button" onclick="generate_domain(event)">生成域名</button>
+                                        <input class="form-control mr-sm-2 input-sm" size="20" type="text" placeholder="{% translate '合法IP' %}" id="valid_ip" value="123.123.123.123">
+                                        <input class="form-control mr-sm-2 input-sm" size="20" type="text" placeholder="{% translate '非法IP' %}" id="invalid_ip" value="10.1.1.1">
+                                        <button class="btn btn-primary my-2 my-sm-0" type="button" onclick="generate_domain(event)">{% translate '生成域名' %}</button>
 
                                     </div>
                                 </form>
                                     <div class="mt-4" id="result" style="color: red"></div>
-                                <div class="mt-4"><a href="/dns/?domain=.r.{{ userdomain }}&monitor=true" target="_blank" class="mr-4">DNS监控</a>
-                                    <a href="/web/?path=.r.{{ userdomain }}&monitor=true" target="_blank">HTTP监控</a></div>
+                                <div class="mt-4"><a href="/dns/?domain=.r.{{ userdomain }}&monitor=true" target="_blank" class="mr-4">{% translate 'DNS监控' %}</a>
+                                    <a href="/web/?path=.r.{{ userdomain }}&monitor=true" target="_blank">{% translate 'HTTP监控' %}</a></div>
                                 </p>
 
                             </div>
@@ -369,18 +370,18 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">提示</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">{% translate '提示' %}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    是否清空全部 <b>{{ total }}</b> 条记录？删除后数据无法恢复
+                    {% blocktranslate %} 是否清空全部 <b>{{ total }}</b> 条记录？删除后数据无法恢复' {% endblocktranslate %}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">{% translate '关闭' %}</button>
                     <a class="button btn-sm btn-danger" style="padding-top: 7px;" href="delete?{{ query_prefix }}{% if page != 1 %}&page={{ page }}{% endif %}"
-                       onclick="delete_all(event, true)">删除</a>
+                       onclick="delete_all(event, true)">{% translate '删除' %}</a>
                 </div>
             </div>
         </div>
@@ -394,10 +395,10 @@
         function show_web_headers(id) {
             if ( $('#web_headers_' + id)[0].className == 'd-none'){
                 $('#web_headers_' + id).removeClass('d-none');
-                $('#showButton_' + id).text('收起');
+                $('#showButton_' + id).text('{% translate '收起' %}');
             } else {
                 $('#web_headers_' + id).addClass('d-none');
-                $('#showButton_' + id).text('查看');
+                $('#showButton_' + id).text('{% translate '查看' %}');
             }
         }
 /*        var getUrlParameter = function getUrlParameter(sParam) {

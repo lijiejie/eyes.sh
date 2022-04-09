@@ -1,0 +1,340 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-09 23:51+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .\dnslog\settings.py:79
+msgid "中文"
+msgstr ""
+
+#: .\dnslog\settings.py:80
+msgid "English"
+msgstr ""
+
+#: .\logview\views.py:87 .\templates\login.html:64
+msgid "登录"
+msgstr "Log In"
+
+#: .\logview\views.py:104
+msgid "登录失败次数太多，锁定10分钟"
+msgstr "Too many login failures, account locked"
+
+#: .\logview\views.py:116
+msgid "用户名或密码错误"
+msgstr "Username or password wrong"
+
+#: .\logview\views.py:128
+msgid "随机账号功能已关闭"
+msgstr "Random login disabled by admin"
+
+#: .\logview\views.py:132
+msgid "爬虫禁止登录"
+msgstr "Bots login not allowed"
+
+#: .\logview\views.py:136
+msgid "随机账号超限，请注册登录"
+msgstr "Random account login exceeded, please register"
+
+#: .\logview\views.py:146
+msgid "随机账号创建失败"
+msgstr "Fail to generate random account"
+
+#: .\logview\views.py:152
+msgid "注册功能已关闭"
+msgstr "Register disabled by admin"
+
+#: .\logview\views.py:156
+msgid "注册"
+msgstr "Register"
+
+#: .\logview\views.py:163
+msgid "无法创建该账号,已被占用"
+msgstr "Username Token, please choose another one"
+
+#: .\logview\views.py:168
+msgid "用户名只能包含字母或数字"
+msgstr "Username must be alpha-numberic"
+
+#: .\logview\views.py:179
+msgid "注册成功,请登录以确保密码有效"
+msgstr "Register succeded, please log in"
+
+#: .\logview\views.py:222 .\logview\views.py:253
+msgid "删除成功"
+msgstr "Delete Success"
+
+#: .\logview\views.py:228 .\logview\views.py:259
+msgid "删除失败"
+msgstr "Delete Failed"
+
+#: .\logview\views.py:307
+msgid "DNSLog管理"
+msgstr "DNSLog"
+
+#: .\logview\views.py:340
+msgid "WebLog管理"
+msgstr "WebLog"
+
+#: .\logview\views.py:363
+msgid "API配置"
+msgstr "API"
+
+#: .\logview\views.py:368
+msgid "DNS重绑定"
+msgstr "DNS Rebind"
+
+#: .\logview\views.py:375
+msgid "Payloads大全"
+msgstr "Payloads"
+
+#: .\templates\auto_reload.html:3
+msgid "监视刷新"
+msgstr "Auto Refresh"
+
+#: .\templates\auto_reload.html:6
+msgid "自动刷新"
+msgstr "Auto Refresh"
+
+#: .\templates\auto_reload.html:6
+msgid ""
+"监视频率为20秒，一旦发现新域名，本页面将自动刷新。如果希望监视特定关键词，请"
+"在搜索结果页开启"
+msgstr ""
+"Auto reload webpage once new records found, you can also check this box on a "
+"search result page to monitor any keywords you like"
+
+#: .\templates\login.html:51
+msgid "用户名即域名前缀，越短，越有利于绕过限制"
+msgstr "Username will become your domain name prefix"
+
+#: .\templates\login.html:53 .\templates\login.html:61
+msgid "用户名"
+msgstr "Username"
+
+#: .\templates\login.html:54
+msgid "邮箱"
+msgstr "Email"
+
+#: .\templates\login.html:55 .\templates\login.html:62
+msgid "密码"
+msgstr "Password"
+
+#: .\templates\login.html:56
+msgid "再次输入密码"
+msgstr "Confirm password"
+
+#: .\templates\login.html:58
+msgid "创建用户"
+msgstr "Register"
+
+#: .\templates\login.html:59
+msgid "已有账号？登录"
+msgstr "Already have an account, login"
+
+#: .\templates\login.html:66
+msgid "注册新账号"
+msgstr "Register new account"
+
+#: .\templates\login.html:68
+msgid "创建随机ID并登录"
+msgstr "Login as random new user"
+
+#: .\templates\login.html:73
+msgid ""
+"基于<a href=\"https://github.com/bugscanteam/dnslog/\" class=\"alert-link\" "
+"target=\"_blank\">bugscan dnslog</a>开发"
+msgstr ""
+"Based on <a href=\"https://github.com/bugscanteam/dnslog/\" class=\"alert-"
+"link\" target=\"_blank\">bugscan dnslog</a>"
+
+#: .\templates\login.html:82 .\templates\views.html:373
+msgid "提示"
+msgstr "TIPS"
+
+#: .\templates\login.html:88
+msgid "随机账号创建后，无法再次登录，其数据可能被定期清理"
+msgstr ""
+"Generated random users can not login and access logs after session ends"
+
+#: .\templates\login.html:89
+msgid "如果你希望长期保存日志，可注册个人账号"
+msgstr "You can register an account to save and view logs"
+
+#: .\templates\login.html:93
+msgid "确认创建"
+msgstr "Sure, create random user for me"
+
+#: .\templates\pager.html:34
+#, python-format
+msgid "第%(page)s页 / 共%(numpages)s页, 共%(total)s条记录"
+msgstr "Page %(page)s / %(numpages)s ,  %(total)s records in total"
+
+#: .\templates\pager.html:36
+msgid "删除所有记录"
+msgstr "Delete All Records"
+
+#: .\templates\views.html:49
+msgid "退出"
+msgstr "Logout"
+
+#: .\templates\views.html:57 .\templates\views.html:69
+msgid "域名"
+msgstr "Domain"
+
+#: .\templates\views.html:58 .\templates\views.html:105
+msgid "搜索"
+msgstr "Search"
+
+#: .\templates\views.html:59 .\templates\views.html:154
+msgid "子域名"
+msgstr "Sub name"
+
+#: .\templates\views.html:72 .\templates\views.html:116
+msgid "位置"
+msgstr "Location"
+
+#: .\templates\views.html:73 .\templates\views.html:117
+msgid "时间"
+msgstr "Time"
+
+#: .\templates\views.html:74 .\templates\views.html:118
+msgid "操作"
+msgstr "Operate"
+
+#: .\templates\views.html:87 .\templates\views.html:131
+#: .\templates\views.html:384
+msgid "删除"
+msgstr "Delete"
+
+#: .\templates\views.html:130 .\templates\views.html:401
+msgid "查看"
+msgstr "Details"
+
+#: .\templates\views.html:157
+msgid "开启用户注册功能"
+msgstr "Enable register"
+
+#: .\templates\views.html:158
+msgid "开启产生随机账号"
+msgstr "Enable generate random new user"
+
+#: .\templates\views.html:167
+msgid "单个请求命中查询"
+msgstr "Single Query Check"
+
+#: .\templates\views.html:174
+msgid "设置为"
+msgstr " "
+
+#: .\templates\views.html:174
+msgid "或者"
+msgstr "or"
+
+#: .\templates\views.html:175 .\templates\views.html:194
+msgid "三级域名前缀"
+msgstr "sub name prefix"
+
+#: .\templates\views.html:177
+msgid "检查是否触发"
+msgstr "To check wheather a query was recieved, for example "
+
+#: .\templates\views.html:177
+msgid "访问"
+msgstr "visit"
+
+#: .\templates\views.html:179 .\templates\views.html:180
+#: .\templates\views.html:205 .\templates\views.html:206
+msgid "返回"
+msgstr "Return"
+
+#: .\templates\views.html:179
+msgid "请求被触发"
+msgstr "Query recieved"
+
+#: .\templates\views.html:180
+msgid "请求未触发"
+msgstr "Query never recieved"
+
+#: .\templates\views.html:187
+msgid "多个请求命中查询"
+msgstr "Multiple Queries Check"
+
+#: .\templates\views.html:196
+msgid ""
+"对于一个较大的Payload集合，首先批量投递payload，再通过单个请求，来检查哪些"
+"payload触发执行成功。"
+msgstr ""
+"After your scanner sends large number of requests includes variaties of sub "
+"names. You can check weather any dns queries were captured with only one API "
+"request"
+
+#: .\templates\views.html:198 .\templates\views.html:199
+#: .\templates\views.html:200
+msgid "扫描器投递"
+msgstr "Test"
+
+#: .\templates\views.html:198 .\templates\views.html:199
+#: .\templates\views.html:200
+msgid "使用域名"
+msgstr "send requests with domain"
+
+#: .\templates\views.html:203
+msgid "检查是否存在漏洞，访问"
+msgstr "To check wheather any queries were captured, visit"
+
+#: .\templates\views.html:205
+msgid "漏洞未触发"
+msgstr "not vulnerable"
+
+#: .\templates\views.html:206
+msgid "，漏洞被触发，data字段包含成功触发的payload清单，至多返回50个"
+msgstr "vulnerable, subs in data were queried by target"
+
+#: .\templates\views.html:221 .\templates\views.html:229
+msgid "生成域名"
+msgstr "Generate Domain"
+
+#: .\templates\views.html:227
+msgid "合法IP"
+msgstr "Valid IP"
+
+#: .\templates\views.html:228
+msgid "非法IP"
+msgstr "Invalid IP"
+
+#: .\templates\views.html:234
+msgid "DNS监控"
+msgstr "Monitor DNS Query"
+
+#: .\templates\views.html:235
+msgid "HTTP监控"
+msgstr "Monitor HTTP Request"
+
+#: .\templates\views.html:379
+#, python-format
+msgid " 是否清空全部 <b>%(total)s</b> 条记录？删除后数据无法恢复' "
+msgstr ""
+"This will delete all <b>%(total)s</b> records, data can not be recovered, "
+"continue?"
+
+#: .\templates\views.html:382
+msgid "关闭"
+msgstr "Close"
+
+#: .\templates\views.html:398
+msgid "收起"
+msgstr "Collapse"
