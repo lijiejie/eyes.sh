@@ -150,16 +150,16 @@ def register(request):
     c = Config.objects.filter(name='enable_register')
     if c and 'no' == c[0].value:
         return redirect('/login?msg=' + _('注册功能已关闭'))
-    username = request.POST.get('username', '')[:100]
+    username = request.POST.get('username', '')[:100].strip()
     password = request.POST.get('password', '')[:100]
-    email = request.POST.get('email', '')[:100]
+    email = request.POST.get('email', '')[:100].strip()
     context = {'title': _('注册'), 'reg': 'true', 'error_msg': '',
                'username': username, 'password': password, 'email': email}
     if User.objects.count() < 1:
         context['init'] = 'true'
 
     if request.method == 'POST':
-        if User.objects.filter(username=username):
+        if len(username) < 1 or User.objects.filter(username=username):
             context['error_msg'] = _('无法创建该账号,已被占用')
             return render(request, 'login.html', context)
         else:
