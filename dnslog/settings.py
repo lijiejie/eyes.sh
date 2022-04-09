@@ -77,7 +77,7 @@ USE_L10N = True
 USE_TZ = True
 LANGUAGES = (
     ('zh-hans', _('中文')),
-    ('en-us', _('English')),
+    ('en', _('English')),
 )
 
 LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale'),)
