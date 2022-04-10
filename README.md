@@ -1,4 +1,6 @@
-# eyes.sh 1.0.1
+# eyes.sh 1.0.2
+
+View this doc in [English](README_EN.md).
 
 [eyes.sh](http://eyes.sh/)是用来辅助安全测试和漏扫工具的DNS Log / HTTP Log检测工具，基于 [BugScan DNSLog](https://github.com/bugscanteam/dnslog/) 优化（感谢四叶草安全、感谢坤哥  :) ）。
 
@@ -9,6 +11,7 @@
 
 ## Chang Log 
 
+* 2022-04-09： 增加多语言支持，添加英文翻译
 * 2022-04-06： 注册用户名，限制只允许使用字母数字
 
 ## **背景** 
