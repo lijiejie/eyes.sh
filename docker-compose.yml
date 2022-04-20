@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  mysql:
+    image: mariadb:10.6
+    container_name: mysql
+    restart: always
+    command: --character-set-server=utf8 --collation-server=utf8_general_ci
+    environment:
+      DB_USER: $DB_USER
+      DB_PORT: $DB_PORT
+      MARIADB_ROOT_PASSWORD: $DB_PASSWORD
+      MARIADB_DATABASE: $DB_NAME
+    healthcheck:
+      test: "mysql -h127.0.0.1 -P$$DB_PORT -u$$DB_USER -p$$MARIADB_ROOT_PASSWORD -e 'SHOW DATABASES;'"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - net
+  dnslog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dnslog
+    container_name: dnslog
+    restart: always
+    environment:
+      DB_HOST: $DB_HOST
+      DB_PORT: $DB_PORT
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      DB_NAME: $DB_NAME
+      SECRET_KEY: $SECRET_KEY
+      DNS_DOMAIN: $DNS_DOMAIN
+      ADMIN_DOMAIN: $ADMIN_DOMAIN
+      NS1_DOMAIN: $NS1_DOMAIN
+      NS2_DOMAIN: $NS2_DOMAIN
+      SERVER_IP: $SERVER_IP
+    depends_on:
+      - mysql
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 8080:80/tcp
+    healthcheck:
+      test: "wget -nv -t1 --spider http://localhost/login --no-check-certificate > /dev/null"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: $DOCKER_SUBNET
