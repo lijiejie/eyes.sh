@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#ma=s-l!2obwj%h-6uu^sbw+4%i2w79%v3^ill62k3&7tjf5dc'
+SECRET_KEY = os.getenv("SECRET_KEY", "#ma=s-l!2obwj%h-6uu^sbw+4%i2w79%v3^ill62k3&7tjf5dc")
 
 DEBUG = False
 
@@ -14,6 +14,13 @@ ALLOWED_HOSTS = ['*']
 
 # SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8080", "http://localhost",
+    "http://%s" % (os.getenv("ADMIN_DOMAIN", "eyes.sh")),
+    "https://%s" % (os.getenv("ADMIN_DOMAIN", "eyes.sh"))
+]
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -59,10 +66,10 @@ WSGI_APPLICATION = 'dnslog.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DB_NAME',
-        'USER': 'DB_USER',
-        'PASSWORD': 'DB_PASSWORD',
-        'HOST': 'DB_HOST',
+        'NAME': os.getenv('DB_NAME', 'mysql'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'root'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': '3306'
     }
 }
@@ -80,26 +87,26 @@ LANGUAGES = (
     ('en', _('English')),
 )
 
-LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale'),)
+LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale'), )
 
 STATIC_URL = '/static/'
 if DEBUG:
-    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'), )
 else:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # 用于DNS记录的域名
-DNS_DOMAIN = 'eyes.sh'
+DNS_DOMAIN = os.getenv('DNS_DOMAIN', 'eyes.sh')
 
 # 管理后台域名
-ADMIN_DOMAIN = ['eyes.sh', 'www.eyes.sh']
+ADMIN_DOMAIN = os.getenv('ADMIN_DOMAIN', 'eyes.sh')
 
 # NS域名
-NS1_DOMAIN = 'eyes_dns1.lijiejie.com'
-NS2_DOMAIN = 'eyes_dns2.lijiejie.com'
+NS1_DOMAIN = os.getenv('NS1_DOMAIN', 'eyes_dns1.lijiejie.com')
+NS2_DOMAIN = os.getenv('NS2_DOMAIN', 'eyes_dns1.lijiejie.com')
 
 # 服务器外网地址
-SERVER_IP = '123.123.123.123'
+SERVER_IP = os.getenv('SERVER_IP', '123.123.123.123')
 
 if not DEBUG:
     LOGGING = {}
@@ -110,7 +117,8 @@ else:
         'disable_existing_loggers': True,
         'formatters': {
             'verbose': {
-                'format': "[%(asctime)s] %(levelname)s [ %(filename)s] [line %(lineno)s] %(message)s",
+                'format':
+                "[%(asctime)s] %(levelname)s [ %(filename)s] [line %(lineno)s] %(message)s",
                 'datefmt': "%d/%b/%Y %H:%M:%S"
             },
             'simple': {
