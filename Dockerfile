@@ -21,8 +21,6 @@ RUN apt-get install -y \
 		gettext-base \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 RUN cp /dnslog/dnslog_nginx.conf /etc/nginx/conf.d/default.conf
 
