@@ -134,7 +134,7 @@
                 <tr class="d-none" id="web_headers_{{log.id}}">
                     <td colspan="6" style="word-break:break-all">
                     <div>
-                        <pre class="alert alert-info">{% if log.city %}{{ log.headers }}{% else %}{{ log.remote_addr }}{% endif %}</pre>
+                        <pre class="alert alert-info">{% if log.headers %}{{ log.headers }}{% else %}{{ log.remote_addr }}{% endif %}</pre>
                     </div>
                     </td>
                 </tr>
