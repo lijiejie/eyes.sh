@@ -56,11 +56,8 @@ class MySQLLogger:
             return
         ip = handler.client_address[0]
         try:
-            doc = requests.get('http://ip.ws.126.net/ipquery?ip=%s' % ip).text
-            doc = doc[doc.find('var localAddress=')+17:].strip()
-            doc = doc.replace('city', '"city"').replace('province', '"province"')
-            _doc = json.loads(doc)
-            city = _doc['province'] + ' ' + _doc['city']
+            doc = requests.get('https://whois.pconline.com.cn/ip.jsp?ip=%s' % ip).text
+            city = doc.split(' ')[0]
         except Exception as e:
             city = ''
         log = DNSLog(user=user[0], host=domain.strip('.'), type=QTYPE[request.q.qtype], ip=ip, city=city)
