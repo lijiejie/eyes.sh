@@ -24,7 +24,7 @@ from django.utils.translation import gettext as _
 
 def get_city_by_ip(ip):
     try:
-        doc = requests.get('https://whois.pconline.com.cn/ip.jsp?ip=%s' % ip).text
+        doc = requests.get('https://whois.pconline.com.cn/ip.jsp?ip=%s' % ip).text.strip()
         city = doc.split(' ')[0]
     except Exception as e:
         city = ''
