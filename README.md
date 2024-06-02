@@ -1,4 +1,4 @@
-# eyes.sh 1.0.2
+# eyes.sh 1.0.3
 
 View this doc in [English](README_EN.md).
 
@@ -11,6 +11,7 @@ View this doc in [English](README_EN.md).
 
 ## Chang Log 
 
+* 2024-06-02： 修复在DNS查询中串联IP查询功能，高并发请求时，响应慢的问题
 * 2022-04-09： 增加多语言支持，添加英文翻译
 * 2022-04-06： 注册用户名，限制只允许使用字母数字
 

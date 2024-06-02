@@ -54,6 +54,7 @@ class DNSLog(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     host = models.CharField(max_length=255, db_index=True, null=False)
+    sub_name = models.CharField(max_length=255, db_index=True, null=True)
     type = models.CharField(max_length=8, db_index=True, null=False)
     created_time = models.DateTimeField(auto_now_add=True)
     ip = models.GenericIPAddressField(null=False, db_index=True)
@@ -64,7 +65,9 @@ class DNSLog(models.Model):
 
     class Meta:
         ordering = ['-id']
-
+        indexes = [
+            models.Index(fields=['sub_name', 'user_id']),
+        ]
 
 class DNSLogAdmin(admin.ModelAdmin):
     list_display = ('user', 'host', 'type', 'created_time')

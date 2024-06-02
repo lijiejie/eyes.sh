@@ -20,11 +20,14 @@ from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.contrib.auth import logout
 from django.utils.translation import gettext as _
+from django.db.models import Q
 
 
 def get_city_by_ip(ip):
     try:
-        doc = requests.get('https://whois.pconline.com.cn/ip.jsp?ip=%s' % ip).text.strip()
+        doc = requests.get('https://whois.pconline.com.cn/ip.jsp?ip=%s' % ip,
+                           headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                                                  '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'}).text.strip()
         city = doc.split(' ')[0]
     except Exception as e:
         city = ''
@@ -402,12 +405,14 @@ def api(request, type, username, prefix):
 
 def group_api(request, username, prefix):
     token = request.GET.get('token', '')
-    if not User.objects.filter(username=username, token=token):
+    user = User.objects.filter(username=username, token=token)
+    if not user:
         return HttpResponse('Invalid token')
     postfix = ".%s.%s.%s" % (prefix, username, settings.DNS_DOMAIN)
-    res = DNSLog.objects.filter(host__endswith=postfix).order_by('host').values('host').distinct()
+    sub_name = prefix.split('.')[-1]
+    res = DNSLog.objects.filter(Q(sub_name=sub_name) & Q(user=user[0])).order_by('host').values('host').distinct()[:50]
     if res:
-        res = res[:50]
+        # res = res[:50]
         data = [item['host'].replace(postfix, '') for item in res]
         text = json.dumps({"success": "true", "data": data})
         return HttpResponse(text, content_type="application/json")
@@ -427,6 +432,21 @@ def as_admin(request):
             login(request, su[0])
             return redirect('/admin/')
     return redirect('/')
+
+
+
+@csrf_exempt
+def ip_to_location(request):
+    ips = request.POST.get('ips', '')
+    if not ips:
+        return HttpResponse('')
+    matches = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ips)
+    found = {}
+    if matches:
+        for ip in matches[:10]:
+            city = get_city_by_ip(ip)
+            found[ip] = city
+    return HttpResponse(json.dumps(found))
 
 
 def config_update(request):

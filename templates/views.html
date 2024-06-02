@@ -77,7 +77,7 @@
               <tbody>
                 {% for log in logs %}
                 <tr>
-                <th scope="row">{{log.id}}</th>
+                <td scope="row">{{log.id}}</td>
                 <td style="word-break:break-all">{{ log.host }}</td>
                 <td>{{ log.type }}</td>
                     <td><a href="?ip={{ log.ip }}">{% if log.ip %} {{ log.ip }}</a> {% else %} &nbsp; {% endif %} </td>
@@ -491,7 +491,27 @@
         $(function () {
             $('[data-toggle="popover"]').popover();
         })
-
+        $(document).ready(function() {
+            var allIPs = new Set([]);
+            $('.table tr').each(function(index) {
+                if (index !== 0){
+                    allIPs.add($(this).children('td')[3].innerText);
+                }
+            });
+            if (allIPs.size !== 0 ){
+                $.post("/ip2location", {"ips": Array.from(allIPs).join(',')}, function(result){
+                    var data = $.parseJSON(result);
+                    $('.table tr').each(function(index) {
+                        if (index !== 0){
+                            let ip = $(this).children('td')[3].innerText;
+                            if (ip in data){
+                                $(this).children('td')[4].innerText = data[ip];
+                            }
+                        }
+                    });
+                });
+            }
+        });
 </script>
 
 </body>
