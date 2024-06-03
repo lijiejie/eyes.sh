@@ -24,14 +24,17 @@ from django.db.models import Q
 
 
 def get_city_by_ip(ip):
-    try:
-        doc = requests.get('https://whois.pconline.com.cn/ip.jsp?ip=%s' % ip,
-                           headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                                                  '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'}).text.strip()
-        city = doc.split(' ')[0]
-    except Exception as e:
-        city = ''
-    return city
+    for _ in range(3):
+        try:
+            doc = requests.get('https://whois.pconline.com.cn/ip.jsp?ip=%s' % ip,
+                               headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                                                      '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'}).text.strip()
+            city = doc.split(' ')[0]
+            if city == '503':
+                continue
+        except Exception as e:
+            city = ''
+        return city
 
 
 @csrf_exempt
@@ -56,7 +59,7 @@ def index(request):
             user_domain = items[-2]
             user = User.objects.filter(user_domain=user_domain)
             if user:
-                city = get_city_by_ip(remote_addr)
+                city = ''    # get_city_by_ip(remote_addr)
                 request_headers = ''
                 for key in request.META:
                     if key.startswith('REQUEST_') or key.startswith('HTTP_') or key.startswith('CONTENT_'):

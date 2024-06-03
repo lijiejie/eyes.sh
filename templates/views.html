@@ -69,7 +69,10 @@
                   <th>{% translate '域名' %}</th>
                   <th>Type</th>
                     <th>IP</th>
-                    <th>{% translate '位置' %}</th>
+                    <th>{% translate '位置' %}
+                        <div class="spinner-grow spinner-grow-sm" role="status" id="spinner_location">
+                        </div>
+                    </th>
                   <th>{% translate '时间' %}</th>
                     <th style="width: 120px;">{% translate '操作' %}</th>
                 </tr>
@@ -113,7 +116,10 @@
                     <th>ID</th>
                     <th style="width: 350px;">URL</th>
                     <th>IP</th>
-                    <th>{% translate '位置' %}</th>
+                    <th>{% translate '位置' %}
+                        <div class="spinner-grow spinner-grow-sm" role="status" id="spinner_location">
+                        </div>
+                    </th>
                     <th>{% translate '时间' %}</th>
                     <th style="width: 170px;">{% translate '操作' %}</th>
                 </tr>
@@ -121,7 +127,7 @@
               <tbody>
                 {% for log in logs %}
                 <tr>
-                <th scope="row">{{log.id}}</th>
+                <td scope="row">{{log.id}}</td>
                 <td> <span style="word-break:break-all">{{ log.path }} </span></td>
                 <td><a href="?ip={{ log.remote_addr }}">{% if log.remote_addr %} {{ log.remote_addr }}</a> {% else %} &nbsp; {% endif %}</td>
                     <td> {% if log.city %} {{ log.city }} {% else %} &nbsp; {% endif %} </td>
@@ -492,25 +498,36 @@
             $('[data-toggle="popover"]').popover();
         })
         $(document).ready(function() {
+            var loc = $(location).attr('pathname');
+            if (loc.endsWith('/web/')){
+                col_index = 2
+            }
+            if (loc.endsWith('/dns/')){
+                col_index = 3
+            }
             var allIPs = new Set([]);
             $('.table tr').each(function(index) {
-                if (index !== 0){
-                    allIPs.add($(this).children('td')[3].innerText);
+                if (index !== 0 && $(this).children('td')[col_index]){
+                    allIPs.add($(this).children('td')[col_index].innerText);
                 }
             });
             if (allIPs.size !== 0 ){
                 $.post("/ip2location", {"ips": Array.from(allIPs).join(',')}, function(result){
                     var data = $.parseJSON(result);
                     $('.table tr').each(function(index) {
-                        if (index !== 0){
-                            let ip = $(this).children('td')[3].innerText;
+                        if (index !== 0 && $(this).children('td')[col_index]){
+                            let ip = $(this).children('td')[col_index].innerText;
                             if (ip in data){
-                                $(this).children('td')[4].innerText = data[ip];
+                                $(this).children('td')[col_index+1].innerText = data[ip];
                             }
                         }
                     });
+                    $('#spinner_location').hide()
                 });
+            } else {
+                $('#spinner_location').hide()
             }
+            
         });
 </script>
 
