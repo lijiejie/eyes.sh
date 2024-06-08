@@ -1,4 +1,4 @@
-# eyes.sh 1.0.3
+# eyes.sh 1.0.4
 
 View this doc in [Chinese](README.md).
 
@@ -19,6 +19,7 @@ Demo site  [http://eyes.sh/](http://eyes.sh/)
 
 ## Chang Log 
 
+* 2024-06-06： Add SSL support, to get rid of **Mixed Content Warnings (HTTPS/SSL)** when exploiting stored XSS on https website
 * 2024-06-02： Bug fixed, a sync IP to geo location search (by HTTP) made DNS Server response too slow, especially under high concurrency queries
 * 2022-04-09： Add english translation
 
