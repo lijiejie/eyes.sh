@@ -25,6 +25,7 @@ urlpatterns = [
     re_path(r'^rebind/gen$', views.rebind_gen, name='rebind_gen'),
     re_path(r'^as_admin/$', views.as_admin, name='as_admin'),
     re_path(r'^ip2location$', views.ip_to_location, name='ip_to_location'),
+    re_path(r'^ip_count/(.+?)$', views.ip_count, name='ip_count'),
     re_path(r'^config/update$', views.config_update, name='config_update'),
     path('i18n/', include('django.conf.urls.i18n')),
     re_path(r'^.*$', views.index, name='index'),

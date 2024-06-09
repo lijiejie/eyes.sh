@@ -2,33 +2,46 @@
 <nav>
     <ul class="pagination">
 
-        {% if logs.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ logs.previous_page_number }}">
+        {% if numpages > 5 %}
+            <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page=1">
                 <span aria-hidden="true">&laquo;</span></a></li>
+        {% endif %}
+
+        {% if logs.has_previous %}
+            <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ logs.previous_page_number }}">
+                <span aria-hidden="true">Previous</span></a></li>
         {% else %}
-            <li class="page-item disabled"><span class="page-link" aria-hidden="true">&laquo;</span></li>
+            <li class="page-item disabled"><span class="page-link" aria-hidden="true">Previous</span></li>
         {% endif %}
 
         {% if logs.number|add:'-4' > 1 %}
             <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ logs.number|add:'-5' }}">&hellip;</a></li>
         {% endif %}
 
+        {% spaceless %}
         {% for i in logs.paginator.page_range %}
+
             {% if logs.number == i %}
                 <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
             {% elif i > logs.number|add:'-5' and i < logs.number|add:'5' %}
                 <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ i }}">{{ i }}</a></li>
             {% endif %}
         {% endfor %}
+        {% endspaceless %}
 
         {% if logs.paginator.num_pages > logs.number|add:'4' %}
             <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ logs.number|add:'5' }}">&hellip;</a></li>
         {% endif %}
 
         {% if logs.has_next %}
-            <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ logs.next_page_number }}"><span aria-hidden="true">&raquo;</span></a></li>
+            <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ logs.next_page_number }}"><span aria-hidden="true">Next</span></a></li>
         {% else %}
-            <li class="page-item disabled"><span class="page-link" aria-hidden="true">&raquo;</span></li>
+            <li class="page-item disabled"><span class="page-link" aria-hidden="true">Next</span></li>
+        {% endif %}
+
+        {% if numpages > 5 %}
+            <li class="page-item"><a class="page-link" href="?{{ query_prefix }}page={{ numpages }}">
+                <span aria-hidden="true">&raquo;</span></a></li>
         {% endif %}
 
         <span class="page-link ml-4" style="border: none">{% blocktranslate %}第{{ page }}页 / 共{{ numpages }}页, 共{{ total }}条记录{% endblocktranslate %}</span>

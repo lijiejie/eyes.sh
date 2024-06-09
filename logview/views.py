@@ -21,6 +21,9 @@ from django.conf import settings
 from django.contrib.auth import logout
 from django.utils.translation import gettext as _
 from django.db.models import Q
+from django.db.models import Count
+from django.http import JsonResponse
+from django.db.models import F
 
 
 def get_city_by_ip(ip):
@@ -499,6 +502,19 @@ def ip_to_location(request):
             city = get_city_by_ip(ip)
             found[ip] = city
     return HttpResponse(json.dumps(found))
+
+
+def ip_count(request, type):
+    userid = request.session.get('userid', None)
+    if not userid:
+        return redirect('/login')
+    obj = []
+    if type == 'dns':
+        obj = DNSLog.objects.filter(Q(user_id=userid)).values('ip').annotate(total=Count('ip')).order_by('-total', 'ip')
+    elif type == 'web':
+        obj = WebLog.objects.filter(Q(user_id=userid)).values('remote_addr').annotate(total=Count('remote_addr')).annotate(ip= F('remote_addr')).order_by('-total', 'ip')
+
+    return JsonResponse({"data": list(obj)}, safe=False)
 
 
 def config_update(request):

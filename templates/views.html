@@ -60,7 +60,8 @@
         </div>
         {% include 'auto_reload.html' %}
         </form>
-
+        <div id="ip_count" class="d-flex flex-wrap">
+        </div>
         <div data-example-id="hoverable-table">
             <table class="table table-hover">
               <thead>
@@ -68,7 +69,7 @@
                   <th>ID</th>
                   <th>{% translate '域名' %}</th>
                   <th>Type</th>
-                    <th>IP</th>
+                    <th>IP<button id="btnCountIPs" class="btn btn-sm btn-info py-0 ml-2" onclick="count_ips('dns')">Count</button></th>
                     <th>{% translate '位置' %}
                         <div class="spinner-grow spinner-grow-sm" role="status" id="spinner_location">
                         </div>
@@ -109,13 +110,15 @@
             </div>
             {% include 'auto_reload.html' %}
         </form>
+        <div id="ip_count" class="d-flex flex-wrap">
+        </div>
         <div data-example-id="hoverable-table">
             <table class="table table-hover">
               <thead>
                 <tr>
                     <th>ID</th>
                     <th style="width: 350px;">URL</th>
-                    <th>IP</th>
+                    <th>IP<button id="btnCountIPs" class="btn btn-sm btn-info py-0 ml-2" onclick="count_ips('web')">Count</button></th>
                     <th>{% translate '位置' %}
                         <div class="spinner-grow spinner-grow-sm" role="status" id="spinner_location">
                         </div>
@@ -543,6 +546,25 @@
             }
 
         });
+
+        function count_ips(type){
+            $('#btnCountIPs').attr("disabled", true);
+            $.get("/ip_count/" + type, function(result){
+                $('#ip_count').html('');
+                for (let i = 0; i < result['data'].length - 1; i++) {
+                  html = `
+                  <a href="?ip=${result['data'][i]['ip']}" target="_blank">
+            <div class="card rounded-1 bg-light mr-4 my-1" style="width: 110px;" >
+                <div class="card-body p-0 justify-content-between d-flex">
+                    <span class="badge bg-light" >${result['data'][i]['ip']}</span> <span class="badge bg-warning float-end rounded-1">${result['data'][i]['total']}</span>
+                </div>
+            </div>
+              </a>`;
+                  $('#ip_count').append(html);
+                }
+                $('#btnCountIPs').attr("disabled", false);
+            });
+        }
 </script>
 
 </body>
