@@ -354,7 +354,7 @@ def log_view(request, type):
             page = paginator.num_pages
             logs = paginator.page(paginator.num_pages)
         if request.GET.get('check_update', '') == 'true':
-            if request.GET.get('last_id') == str(logs[0].id):
+            if len(logs) == 0 or request.GET.get('last_id') == str(logs[0].id):
                 return HttpResponse('noChange')
             else:
                 return HttpResponse('Changed')
