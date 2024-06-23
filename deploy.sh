@@ -30,7 +30,7 @@ pyenv virtualenv 3.8.2 dnslog
 ~/.pyenv/versions/dnslog/bin/python manage.py collectstatic
 ~/.pyenv/versions/dnslog/bin/gunicorn --workers 5 --bind 127.0.0.1:8000 dnslog.wsgi:application --daemon
 nohup ~/.pyenv/versions/3.8.2/envs/dnslog/bin/python3.8 ./zoneresolver.py &
-envsubst '$ADMIN_DOMAIN' < /dnslog/dnslog_nginx.conf > /etc/nginx/conf.d/default.conf
+envsubst '$ADMIN_DOMAIN,$DNS_DOMAIN' < /dnslog/dnslog_nginx.conf > /etc/nginx/conf.d/default.conf
 setsebool httpd_can_network_connect on
 setenforce permissive
 systemctl restart nginx
