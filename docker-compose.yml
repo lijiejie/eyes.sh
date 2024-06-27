@@ -26,6 +26,7 @@ services:
     image: dnslog
     container_name: dnslog
     restart: always
+    user: root
     environment:
       DB_HOST: $DB_HOST
       DB_PORT: $DB_PORT
@@ -44,7 +45,9 @@ services:
       - 53:53/tcp
       - 53:53/udp
       - 8080:80/tcp
-    command: /bin/bash -c "envsubst '$$ADMIN_DOMAIN,$$DNS_DOMAIN' < /dnslog/dnslog_nginx.conf > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+    volumes:
+      - .:/dnslog
+    command: /bin/bash -c "/dnslog/docker-entrypoint.sh && envsubst '$$ADMIN_DOMAIN,$$DNS_DOMAIN' < /dnslog/dnslog_nginx.conf > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
     healthcheck:
       test: "wget -nv -t1 --spider http://localhost/login --no-check-certificate > /dev/null"
       interval: 10s

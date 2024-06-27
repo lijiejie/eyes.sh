@@ -10,8 +10,6 @@ RUN chmod +x /dnslog/docker-entrypoint.sh
 WORKDIR /dnslog
 EXPOSE 53
 
-ENTRYPOINT ["/dnslog/docker-entrypoint.sh"]
-
 # Install nginx
 RUN apt update -y
 RUN apt-get install -y \
